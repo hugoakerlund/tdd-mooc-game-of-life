@@ -5,9 +5,6 @@ use std::io::BufReader;
 mod rle_parser;
 use crate::rle_parser::RLEParser;
 
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
 
 fn read_file_to_string(input_file: &str) -> std::io::Result<String> {
     let file = File::open(input_file)?;
@@ -23,12 +20,6 @@ mod tests {
     static FILE_CONTENTS: &str = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-
-    #[test]
     fn test_read_file_to_string() {
         let result = read_file_to_string("test.txt").unwrap();
         assert_eq!(result, "Hello, World!\n");
@@ -37,8 +28,7 @@ mod tests {
     #[test]
     fn test_read_rle_file_to_string() {
         let result = read_file_to_string("test_data/glider.rle").unwrap();
-        let expected = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        assert_eq!(result, expected)
+        assert_eq!(result, FILE_CONTENTS)
     }
 
     #[test]
