@@ -4,7 +4,10 @@ pub struct RLEParser {
     creator: String,
     comments: String,
     header: String,
-    pattern: String
+    pattern: String,
+    width: u8,
+    height: u8,
+    rule: String
 }
 
 impl RLEParser {
@@ -14,7 +17,10 @@ impl RLEParser {
                   creator: String::new(),
                   comments: String::new(),
                   header: String::new(),
-                  pattern: String::new()
+                  pattern: String::new(),
+                  width: 0,
+                  height: 0,
+                  rule: String::new()
                  })
     }
 
@@ -42,6 +48,18 @@ impl RLEParser {
         self.creator.clone()
     }
 
+    pub fn get_width(&self) -> u8 {
+        self.width
+    }
+
+    pub fn get_height(&self) -> u8 {
+        self.height
+    }
+
+    pub fn get_rule(&self) -> String {
+        self.rule.clone()
+    }
+
     pub fn parse_file(&mut self) -> () {
         for line in self.file_contents.split("\n") {
             if line.starts_with("#N") {
@@ -61,5 +79,21 @@ impl RLEParser {
                 self.pattern += line;
             }
         }
+        self.parse_header();
+    }
+
+    pub fn parse_header(&mut self) {
+        let header_parts: Vec<&str> =  self.header.split(", ").collect();
+        let width_part = header_parts[0];
+        let height_part= header_parts[1];
+        let rule_part = header_parts[2];
+
+        let width = width_part.replace("x = ", "");
+        let height = height_part.replace("y = ", "");
+        let rule = rule_part.replace("rule = ", "");
+
+        self.width = width.parse().unwrap();
+        self.height = height.parse().unwrap();
+        self.rule = rule.to_string();
     }
 }
