@@ -20,6 +20,7 @@ fn read_file_to_string(input_file: &str) -> std::io::Result<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    static FILE_CONTENTS: &str = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
 
     #[test]
     fn it_works() {
@@ -41,54 +42,72 @@ mod tests {
     }
 
     #[test]
-    fn test_create_RLEParser() {
-        let file_contents = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        let parser = RLEParser::new(file_contents).unwrap();
-        assert_eq!(parser.get_file_contents(), file_contents);
+    fn test_create_rleparser() {
+        let parser = RLEParser::new(&FILE_CONTENTS).unwrap();
+        assert_eq!(parser.get_file_contents(), FILE_CONTENTS);
     }
 
     #[test]
-    fn test_RLEParser_parse_header() {
-        let file_contents = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        let mut parser = RLEParser::new(file_contents).unwrap();
+    fn test_rleparser_get_header() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
         parser.parse_file();
         let header = "x = 3, y = 3, rule = B3/S23\r".to_string();
         assert_eq!(parser.get_header(), header);
     }
 
     #[test]
-    fn test_RLEParser_parse_name() {
-        let file_contents = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        let mut parser = RLEParser::new(file_contents).unwrap();
+    fn test_rleparser_get_name() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
         parser.parse_file();
         let name = "Glider\r".to_string();
         assert_eq!(parser.get_name(), name);
     }
 
     #[test]
-    fn test_RLEParser_parse_creator() {
-        let file_contents = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        let mut parser = RLEParser::new(file_contents).unwrap();
+    fn test_rleparser_get_creator() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
         parser.parse_file();
         let creator = "Richard K. Guy\r".to_string();
         assert_eq!(parser.get_creator(), creator);
     }
 
     #[test]
-    fn test_RLEParser_parse_comments() {
-        let file_contents = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        let mut parser = RLEParser::new(file_contents).unwrap();
+    fn test_rleparser_get_comments() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
         parser.parse_file();
         let comments = "The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\nwww.conwaylife.com/wiki/index.php?title=Glider\r\n".to_string();
         assert_eq!(parser.get_comments(), comments);
     }
 
     #[test]
-    fn test_RLEParser_parse_pattern() {
-        let file_contents = "#N Glider\r\n#O Richard K. Guy\r\n#C The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.\r\n#C www.conwaylife.com/wiki/index.php?title=Glider\r\nx = 3, y = 3, rule = B3/S23\r\nbob$2bo$3o!";
-        let mut parser = RLEParser::new(file_contents).unwrap();
+    fn test_rleparser_get_pattern() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
         parser.parse_file();
         let pattern = "bob$2bo$3o!".to_string();
         assert_eq!(parser.get_pattern(), pattern);
+    }
+
+    #[test]
+    fn test_rleparser_get_width() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
+        parser.parse_file();
+        let width = 3;
+        assert_eq!(parser.get_width(), width);
+    }
+
+    #[test]
+    fn test_rleparser_get_height() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
+        parser.parse_file();
+        let height = 3;
+        assert_eq!(parser.get_height(), height);
+    }
+
+    #[test]
+    fn test_rleparser_get_rule() {
+        let mut parser = RLEParser::new(&FILE_CONTENTS).unwrap();
+        parser.parse_file();
+        let rule = "B3/S23\r";
+        assert_eq!(parser.get_rule(), rule);
     }
 }
