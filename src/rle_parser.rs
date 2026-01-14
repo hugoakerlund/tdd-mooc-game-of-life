@@ -1,3 +1,4 @@
+
 pub struct RLEParser {
     file_contents: String,
     name: String,
