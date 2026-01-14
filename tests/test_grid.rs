@@ -82,4 +82,22 @@ mod tests {
         assert_eq!(grid.count_live_neighbours(2, 2), 2);
     }
 
+    #[test]
+    fn test_will_cell_live() {
+        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        grid.pattern_to_grid();
+
+        assert_eq!(grid.will_cell_live(0, 0), false);
+        assert_eq!(grid.will_cell_live(0, 1), false);
+        assert_eq!(grid.will_cell_live(0, 2), true);
+
+        assert_eq!(grid.will_cell_live(1, 0), true);
+        assert_eq!(grid.will_cell_live(1, 1), false);
+        assert_eq!(grid.will_cell_live(1, 2), true);
+
+        assert_eq!(grid.will_cell_live(2, 0), false);
+        assert_eq!(grid.will_cell_live(2, 1), true);
+        assert_eq!(grid.will_cell_live(2, 2), true);
+    }
+
 }

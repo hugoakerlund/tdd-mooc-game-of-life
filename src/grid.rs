@@ -172,7 +172,22 @@ impl Grid {
         return row < self.height  && col < self.width;
     }
 
-    fn is_alive(&self, row: usize, col: usize) -> bool {
+    pub fn is_alive(&self, row: usize, col: usize) -> bool {
         return self.grid[row][col] == '*';
+    }
+
+    pub fn will_cell_live(&self, row: usize, col: usize) -> bool {
+        let live_neighbours = self.count_live_neighbours(row as i8, col as i8);
+        let mut is_alive: bool = self.is_alive(row, col);
+        if !is_alive && live_neighbours == 3 {
+            is_alive = true;
+        }
+        else if is_alive && (live_neighbours < 2  || live_neighbours > 3) {
+            is_alive = false;
+        }
+        else if !is_alive && (live_neighbours >= 2  && live_neighbours <= 3) {
+            is_alive = true;
+        }
+        is_alive
     }
 }
