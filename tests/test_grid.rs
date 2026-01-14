@@ -24,5 +24,13 @@ mod tests {
         assert_eq!(grid.to_string(), expected);
     }
 
+    #[test]
+    fn test_grid_to_pattern() {
+        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        grid.pattern_to_grid();
+        let pattern = grid.grid_to_pattern();
+        assert_eq!(pattern, PATTERN);
+    }
+
 }
 

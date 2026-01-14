@@ -53,7 +53,6 @@ impl Grid {
 
             if run_count.len() > 0 {
                 let count: u8 = run_count.parse().unwrap();
-                println!("{}", count);
                 for _j in 0..count {
                     parsed_row.push(converted_char);
                 }
@@ -67,10 +66,11 @@ impl Grid {
     }
 
     fn convert_char(&self, c: char) -> Result<char, &'static str> {
-        println!("{}", c);
         match c {
             'b' => Ok('.'),
             'o' => Ok('*'),
+            '.' => Ok('b'),
+            '*' => Ok('o'),
             '!' => Ok('!'),
             _ => Err("Invalid character")
         }
@@ -85,4 +85,59 @@ impl Grid {
         result
     }
 
+    pub fn grid_to_pattern(&self) -> String {
+        let rows: Vec<String> = self.grid.clone()
+            .iter()
+            .map(|row| row.iter().collect::<String>())
+            .collect::<Vec<String>>();
+
+        let pattern_rows: Vec<String> = self.row_to_pattern(rows);
+        let mut pattern: String = pattern_rows.join("$");
+        pattern += "!";
+        pattern
+    }
+
+    fn row_to_pattern(&self, rows: Vec<String>) -> Vec<String> {
+        let mut result: Vec<String> = Vec::new();
+        for i in 0..rows.len(){
+            let row: &String = &rows[i];
+            let mut new_row: String = String::new();
+            let mut current_char: char = row.chars().nth(0).unwrap();
+            let mut run_count: u8 = 1;
+
+            let mut j: usize = 0;
+            while j < row.len(){
+                current_char = row.chars().nth(j).unwrap();
+                if j < row.len() - 1 {
+                    let mut next_char = row.chars().nth(j + 1).unwrap();
+                    while j < row.len() - 1 && next_char == current_char {
+                        run_count += 1;
+                        j += 1;
+                        
+                        if j < row.len() - 1 {
+                            next_char = row.chars().nth(j + 1).unwrap();
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+                current_char = self.convert_char(current_char).unwrap();
+
+                if run_count == 1 {
+                    new_row += &current_char.to_string();
+                }
+
+                else if run_count > 1 {
+                    let count: String = run_count.to_string();
+                    new_row += &count;
+                    new_row += &current_char.to_string();
+                }
+                j += 1;
+                run_count = 1;
+            }
+            result.push(new_row);
+        }
+    result
+    }
 }
