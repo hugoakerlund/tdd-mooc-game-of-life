@@ -77,7 +77,7 @@ impl Grid {
     }
 
     pub fn to_string(&self) -> String {
-        let mut result = self.grid.clone()
+        let result = self.grid.clone()
             .iter()
             .map(|row| row.iter().collect::<String>())
             .collect::<Vec<String>>()
@@ -139,5 +139,41 @@ impl Grid {
             result.push(new_row);
         }
     result
+    }
+
+    pub fn get_cell_at(&self, row: usize, col: usize) -> char {
+        return self.grid[row][col];
+    }
+
+    pub fn set_cell_at(&mut self, row: usize, col: usize, value: char) -> () {
+        self.grid[row][col] = value;
+    }
+
+    pub fn count_live_neighbours(&self, row: i8, col: i8) -> u8 {
+        let moves: Vec<(i8, i8)> = vec![(1, 0), (1, -1), 
+                                        (0, -1), (-1, -1), 
+                                        (-1, 0), (-1, 1), 
+                                        (0, 1), (1, 1)];
+        let mut count: u8 = 0;
+        for (first, second) in moves {
+            let new_row = row + first;
+            let new_col = col + second;
+            if new_col < 0 || new_row < 0 {
+                continue;
+            }
+            if self.is_inside_grid(new_row as u8, new_col as u8) && self.is_alive(new_row as usize, new_col as usize){
+                count += 1;
+            }
+        }
+        count
+    }
+
+    fn is_inside_grid(&self, row: u8, col: u8) -> bool {
+        return row < self.height && row >= 0 && 
+               col < self.width && col >= 0;
+    }
+
+    fn is_alive(&self, row: usize, col: usize) -> bool {
+        return self.grid[row][col] == '*';
     }
 }
