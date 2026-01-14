@@ -4,6 +4,7 @@ use std::io::BufReader;
 
 pub mod rle_parser;
 pub mod grid;
+pub mod game_of_life;
 
 
 

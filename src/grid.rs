@@ -169,8 +169,7 @@ impl Grid {
     }
 
     fn is_inside_grid(&self, row: u8, col: u8) -> bool {
-        return row < self.height && row >= 0 && 
-               col < self.width && col >= 0;
+        return row < self.height  && col < self.width;
     }
 
     fn is_alive(&self, row: usize, col: usize) -> bool {
