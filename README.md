@@ -1,8 +1,12 @@
 # TDD: Conway's game of life
 
+Build
+
+    cargo build --release
+
 Usage
 
-    cargo run -- <generations> <inputRleFile> 
+    ./target/release/game-of-life <generations> <inputRleFile> 
 
 ### Developing
 
