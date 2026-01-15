@@ -128,6 +128,9 @@ mod tests {
         grid.pattern_to_grid();
         grid.next_generation();
         let expected = "...\n*.*\n.**\n.*.";
+
         assert_eq!(grid.to_string(), expected);
+        grid.next_generation();
+        assert_eq!(grid.to_string(), "...\n..*\n*.*\n.**");
     }
 }

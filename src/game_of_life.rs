@@ -7,15 +7,31 @@ pub struct GameOfLife {
 
 impl GameOfLife {
     pub fn new(grid: Grid) -> Self {
-        grid.grid_to_pattern();
+        let mut game_grid = grid;
+        game_grid.pattern_to_grid();
         Self {
-            grid: grid,
+            grid: game_grid,
             generations: 0
         }
     }
 
-    pub fn get_generations(&self) -> u8 {
+    pub fn get_current_generation(&self) -> u8 {
         return self.generations;
+    }
+
+    pub fn get_grid(&self) -> String {
+        self.grid.to_string()
+    }
+
+    pub fn simulate_game(&mut self, generations: u8) {
+        for i in 0..generations {
+            self.next_generation();
+        }
+    }
+
+    pub fn next_generation(&mut self) {
+        self.generations += 1;
+        self.grid.next_generation();
     }
 
 }

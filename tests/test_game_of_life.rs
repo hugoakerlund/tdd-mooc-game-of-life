@@ -13,6 +13,34 @@ mod tests {
     fn create_game_of_life() {
         let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
         let game_of_life = GameOfLife::new(grid);
-        assert_eq!(game_of_life.get_generations(), 0);
+        assert_eq!(game_of_life.get_current_generation(), 0);
+    }
+
+    #[test]
+    fn next_generation() {
+        let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut game_of_life = GameOfLife::new(grid);
+        game_of_life.next_generation();
+        assert_eq!(game_of_life.get_current_generation(), 1);
+        assert_eq!(game_of_life.get_grid(),  "...\n*.*\n.**\n.*.");
+
+        game_of_life.next_generation();
+        assert_eq!(game_of_life.get_current_generation(), 2);
+        assert_eq!(game_of_life.get_grid(),  "...\n..*\n*.*\n.**");
+    }
+
+    #[test]
+    fn simulate_game() {
+        let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut game_of_life = GameOfLife::new(grid);
+        game_of_life.simulate_game(3);
+        assert_eq!(game_of_life.get_current_generation(), 3);
+        assert_eq!(game_of_life.get_grid(), "....\n.*..\n..**\n.**.");
+
+        let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut game_of_life = GameOfLife::new(grid);
+        game_of_life.simulate_game(4);
+        assert_eq!(game_of_life.get_current_generation(), 4);
+        assert_eq!(game_of_life.get_grid(), "....\n..*.\n...*\n.***");
     }
 }

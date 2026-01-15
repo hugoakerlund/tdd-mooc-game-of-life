@@ -197,23 +197,27 @@ impl Grid {
         let mut right: i8 = 0;
 
         for i in 0..self.width {
-            if self.will_cell_live(-1, i) {
+            if self.count_live_neighbours(-1, i) == 3 {
                 top = 1;
+                break;
             }
         }
         for i in 0..self.width {
-            if self.will_cell_live(self.height, i) {
+            if self.count_live_neighbours(self.height, i) == 3 {
                 bottom = 1;
+                break;
             }
         }
         for i in 0..self.height {
-            if self.will_cell_live(i, -1) {
+            if self.count_live_neighbours(i, -1) == 3 {
                 left = 1;
+                break;
             }
         }
         for i in 0..self.height {
-            if self.will_cell_live(i, self.width) {
+            if self.count_live_neighbours(i, self.width) == 3 {
                 right = 1;
+                break;
             }
         }
         if top == 1 || bottom == 1 || left == 1 || right == 1 {
