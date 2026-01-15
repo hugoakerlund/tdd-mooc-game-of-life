@@ -102,7 +102,7 @@ impl Grid {
         for i in 0..rows.len(){
             let row: &String = &rows[i];
             let mut new_row: String = String::new();
-            let mut current_char: char = row.chars().nth(0).unwrap();
+            let mut current_char;
             let mut run_count: i8 = 1;
 
             let mut j: usize = 0;
@@ -122,16 +122,16 @@ impl Grid {
                         }
                     }
                 }
-                current_char = self.convert_char(current_char).unwrap();
+                let converted_char = self.convert_char(current_char).unwrap();
 
                 if run_count == 1 {
-                    new_row += &current_char.to_string();
+                    new_row += &converted_char.to_string();
                 }
 
                 else if run_count > 1 {
                     let count: String = run_count.to_string();
                     new_row += &count;
-                    new_row += &current_char.to_string();
+                    new_row += &converted_char.to_string();
                 }
                 j += 1;
                 run_count = 1;

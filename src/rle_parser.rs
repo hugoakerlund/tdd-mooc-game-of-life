@@ -5,8 +5,8 @@ pub struct RLEParser {
     comments: String,
     header: String,
     pattern: String,
-    width: u8,
-    height: u8,
+    width: i8,
+    height: i8,
     rule: String
 }
 
@@ -48,11 +48,11 @@ impl RLEParser {
         self.creator.clone()
     }
 
-    pub fn get_width(&self) -> u8 {
+    pub fn get_width(&self) -> i8 {
         self.width
     }
 
-    pub fn get_height(&self) -> u8 {
+    pub fn get_height(&self) -> i8 {
         self.height
     }
 
