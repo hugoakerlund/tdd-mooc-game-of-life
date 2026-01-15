@@ -2,7 +2,7 @@ use crate::grid::Grid;
 
 pub struct GameOfLife {
     grid: Grid,
-    generations: u8
+    generations: u8,
 }
 
 impl GameOfLife {
@@ -11,12 +11,12 @@ impl GameOfLife {
         game_grid.pattern_to_grid();
         Self {
             grid: game_grid,
-            generations: 0
+            generations: 0,
         }
     }
 
     pub fn get_current_generation(&self) -> u8 {
-        return self.generations;
+        self.generations
     }
 
     pub fn get_grid(&self) -> String {
@@ -37,5 +37,4 @@ impl GameOfLife {
         self.generations += 1;
         self.grid.next_generation();
     }
-
 }

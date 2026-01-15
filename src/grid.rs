@@ -2,7 +2,7 @@ pub struct Grid {
     grid: Vec<Vec<char>>,
     pattern: String,
     width: i8,
-    height: i8
+    height: i8,
 }
 
 impl Grid {
@@ -11,7 +11,7 @@ impl Grid {
             grid: Vec::new(),
             pattern: pattern.to_string(),
             width: width,
-            height: height
+            height: height,
         }
     }
 
@@ -45,7 +45,7 @@ impl Grid {
                 run_count += &current_char.to_string();
                 continue;
             }
-            
+
             let converted_char = self.convert_char(current_char).unwrap();
             if converted_char == '!' {
                 break;
@@ -57,10 +57,12 @@ impl Grid {
                     parsed_row.push(converted_char);
                 }
                 run_count = "".to_string();
-            }
-            else {
+            } else {
                 parsed_row.push(converted_char);
             }
+        }
+        while parsed_row.len() < self.width.try_into().unwrap() {
+            parsed_row.push('.');
         }
         parsed_row
     }
@@ -72,12 +74,14 @@ impl Grid {
             '.' => Ok('b'),
             '*' => Ok('o'),
             '!' => Ok('!'),
-            _ => Err("Invalid character")
+            _ => Err("Invalid character"),
         }
     }
 
     pub fn to_string(&self) -> String {
-        let result = self.grid.clone()
+        let result = self
+            .grid
+            .clone()
             .iter()
             .map(|row| row.iter().collect::<String>())
             .collect::<Vec<String>>()
@@ -86,7 +90,9 @@ impl Grid {
     }
 
     pub fn grid_to_pattern(&self) -> String {
-        let rows: Vec<String> = self.grid.clone()
+        let rows: Vec<String> = self
+            .grid
+            .clone()
             .iter()
             .map(|row| row.iter().collect::<String>())
             .collect::<Vec<String>>();
@@ -99,36 +105,37 @@ impl Grid {
 
     fn row_to_pattern(&self, rows: Vec<String>) -> Vec<String> {
         let mut result: Vec<String> = Vec::new();
-        for i in 0..rows.len(){
+        for i in 0..rows.len() {
             let row: &String = &rows[i];
             let mut new_row: String = String::new();
             let mut current_char;
             let mut run_count: i8 = 1;
 
             let mut j: usize = 0;
-            while j < row.len(){
+            while j < row.len() {
                 current_char = row.chars().nth(j).unwrap();
                 if j < row.len() - 1 {
                     let mut next_char = row.chars().nth(j + 1).unwrap();
                     while j < row.len() - 1 && next_char == current_char {
                         run_count += 1;
                         j += 1;
-                        
+
                         if j < row.len() - 1 {
                             next_char = row.chars().nth(j + 1).unwrap();
-                        }
-                        else {
+                        } else {
                             break;
                         }
                     }
                 }
                 let converted_char = self.convert_char(current_char).unwrap();
 
-                if run_count == 1 {
-                    new_row += &converted_char.to_string();
+                if j == row.len() - 1 && converted_char == 'b' {
+                    break;
                 }
 
-                else if run_count > 1 {
+                else if run_count == 1 {
+                    new_row += &converted_char.to_string();
+                } else if run_count > 1 {
                     let count: String = run_count.to_string();
                     new_row += &count;
                     new_row += &converted_char.to_string();
@@ -138,7 +145,7 @@ impl Grid {
             }
             result.push(new_row);
         }
-    result
+        result
     }
 
     pub fn get_cell_at(&self, row: usize, col: usize) -> char {
@@ -150,15 +157,21 @@ impl Grid {
     }
 
     pub fn count_live_neighbours(&self, row: i8, col: i8) -> i8 {
-        let moves: Vec<(i8, i8)> = vec![(1, 0), (1, -1), 
-                                        (0, -1), (-1, -1), 
-                                        (-1, 0), (-1, 1), 
-                                        (0, 1), (1, 1)];
+        let moves: Vec<(i8, i8)> = vec![
+            (1, 0),
+            (1, -1),
+            (0, -1),
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, 1),
+            (1, 1),
+        ];
         let mut count: i8 = 0;
         for (first, second) in moves {
             let new_row = row + first;
             let new_col = col + second;
-            if self.is_alive(new_row, new_col){
+            if self.is_alive(new_row, new_col) {
                 count += 1;
             }
         }
@@ -166,8 +179,7 @@ impl Grid {
     }
 
     fn is_inside_grid(&self, row: i8, col: i8) -> bool {
-        return row < self.height && row >= 0  
-               && col < self.width && col >= 0;
+        return row < self.height && row >= 0 && col < self.width && col >= 0;
     }
 
     pub fn is_alive(&self, row: i8, col: i8) -> bool {
@@ -182,8 +194,7 @@ impl Grid {
         let mut is_alive: bool = self.is_alive(row, col);
         if !is_alive && live_neighbours == 3 {
             is_alive = true;
-        }
-        else if is_alive && (live_neighbours < 2  || live_neighbours > 3) {
+        } else if is_alive && (live_neighbours < 2 || live_neighbours > 3) {
             is_alive = false;
         }
         is_alive
@@ -193,7 +204,7 @@ impl Grid {
         let mut needs_expansion: bool = false;
         let mut top: i8 = 0;
         let mut bottom: i8 = 0;
-        let mut left: i8 = 0; 
+        let mut left: i8 = 0;
         let mut right: i8 = 0;
 
         for i in 0..self.width {
@@ -251,7 +262,8 @@ impl Grid {
             let right = grid_expansion.4;
             self.expand_grid(top, bottom, left, right);
         }
-        let mut next_generation_grid: Vec<Vec<char>> = vec![vec!['.'; self.width as usize]; self.height as usize];
+        let mut next_generation_grid: Vec<Vec<char>> =
+            vec![vec!['.'; self.width as usize]; self.height as usize];
         for row in 0..self.height {
             for col in 0..self.width {
                 if self.will_cell_live(row, col) {

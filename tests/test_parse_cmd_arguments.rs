@@ -19,4 +19,5 @@ mod tests {
         let expected = "Usage: ./game_of_life <generations> <input_file.rle>";
         assert_eq!(output, expected);
     }
+
 }

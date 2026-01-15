@@ -63,20 +63,20 @@ impl RLEParser {
     pub fn parse_file(&mut self) -> () {
         for line in self.file_contents.split("\n") {
             if line.starts_with("#N") {
-                self.name = line[3..line.len()].to_string();
+                self.name = line[3..line.len()].trim().to_string();
             }
             else if line.starts_with("#O") {
-                self.creator = line[3..line.len()].to_string();
+                self.creator = line[3..line.len()].trim().to_string();
             }
             else if line.starts_with("#C") {
                 self.comments += &line[3..line.len()].to_string();
                 self.comments += "\n";
             }
             else if line.starts_with("x") {
-                self.header = line.to_string();
+                self.header = line.trim().to_string();
             }
             else if self.header.len() > 0 {
-                self.pattern += line;
+                self.pattern += line.trim();
             }
         }
         self.parse_header();

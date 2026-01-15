@@ -4,37 +4,56 @@ use game_of_life::grid::Grid;
 mod tests {
     use super::*;
 
-    static PATTERN: &str = "bob$2bo$3o!";
-    static WIDTH: i8 = 3;
-    static HEIGHT: i8 = 3;
+    static GLIDER_PATTERN: &str = "bo$2bo$3o!";
+    static GLIDER_WIDTH: i8 = 3;
+    static GLIDER_HEIGHT: i8 = 3;
+
+    static WORM_PATTERN: &str = "b2o$obo$o4bo$b5o!";
+    static WORM_WIDTH: i8 = 6;
+    static WORM_HEIGHT: i8 = 4;
 
     #[test]
     fn test_create_grid() {
-        let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
-        assert_eq!(grid.get_width(), 3);
-        assert_eq!(grid.get_height(), 3);
-        assert_eq!(grid.get_pattern(), PATTERN);
+        let grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
+        assert_eq!(grid.get_width(), GLIDER_WIDTH);
+        assert_eq!(grid.get_height(), GLIDER_HEIGHT);
+        assert_eq!(grid.get_pattern(), GLIDER_PATTERN);
+
+        let grid = Grid::new(WORM_PATTERN, WORM_WIDTH, WORM_HEIGHT);
+        assert_eq!(grid.get_width(), WORM_WIDTH);
+        assert_eq!(grid.get_height(), WORM_HEIGHT);
+        assert_eq!(grid.get_pattern(), WORM_PATTERN);
     }
 
     #[test]
     fn test_pattern_to_grid() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
         let expected = ".*.\n..*\n***".to_string();
+        assert_eq!(grid.to_string(), expected);
+
+        let mut grid = Grid::new(WORM_PATTERN, WORM_WIDTH, WORM_HEIGHT);
+        grid.pattern_to_grid();
+        let expected = ".**...\n*.*...\n*....*\n.*****".to_string();
         assert_eq!(grid.to_string(), expected);
     }
 
     #[test]
     fn test_grid_to_pattern() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
         let pattern: String = grid.grid_to_pattern();
-        assert_eq!(pattern, PATTERN);
+        assert_eq!(pattern, GLIDER_PATTERN);
+
+        let mut grid = Grid::new(WORM_PATTERN, WORM_WIDTH, WORM_HEIGHT);
+        grid.pattern_to_grid();
+        let pattern: String = grid.grid_to_pattern();
+        assert_eq!(pattern, WORM_PATTERN);
     }
 
     #[test]
     fn test_get_cell_at() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
         assert_eq!(grid.get_cell_at(0, 0), '.');
         assert_eq!(grid.get_cell_at(0, 1), '*');
@@ -51,7 +70,7 @@ mod tests {
 
     #[test]
     fn test_set_cell_at() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
 
         grid.set_cell_at(0, 0, '*');
@@ -66,7 +85,7 @@ mod tests {
 
     #[test]
     fn test_count_live_neighbours() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
 
         assert_eq!(grid.count_live_neighbours(0, 0), 1);
@@ -84,7 +103,7 @@ mod tests {
 
     #[test]
     fn test_will_cell_live() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
 
         assert_eq!(grid.will_cell_live(0, 0), false);
@@ -107,7 +126,7 @@ mod tests {
 
     #[test]
     fn test_detect_if_grid_needs_expansion() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
         let result = grid.detect_if_needs_expansion();
         assert_eq!(result, (true, 0, 1, 0, 0));
@@ -115,7 +134,7 @@ mod tests {
 
     #[test]
     fn test_expand_grid() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
         grid.expand_grid(1, 1, 1, 1);
         let expected = ".....\n..*..\n...*.\n.***.\n.....";
@@ -124,7 +143,7 @@ mod tests {
 
     #[test]
     fn test_next_generation() {
-        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let mut grid = Grid::new(GLIDER_PATTERN, GLIDER_WIDTH, GLIDER_HEIGHT);
         grid.pattern_to_grid();
         grid.next_generation();
         let expected = "...\n*.*\n.**\n.*.";
