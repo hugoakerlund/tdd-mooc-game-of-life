@@ -6,7 +6,7 @@ Build
 
 Usage
 
-    ./target/release/game-of-life <generations> <inputRleFile> 
+    ./target/release/game-of-life <generations> <input_file.rle> 
 
 ### Developing
 
