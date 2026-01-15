@@ -23,8 +23,12 @@ impl GameOfLife {
         self.grid.to_string()
     }
 
+    pub fn get_pattern(&self) -> String {
+        self.grid.grid_to_pattern()
+    }
+
     pub fn simulate_game(&mut self, generations: u8) {
-        for i in 0..generations {
+        for _i in 0..generations {
             self.next_generation();
         }
     }
