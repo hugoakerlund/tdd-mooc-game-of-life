@@ -17,6 +17,13 @@ mod tests {
     }
 
     #[test]
+    fn get_pattern() {
+        let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        let game_of_life = GameOfLife::new(grid);
+        assert_eq!(game_of_life.get_pattern(), "bob$2bo$3o!");
+    }
+
+    #[test]
     fn next_generation() {
         let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
         let mut game_of_life = GameOfLife::new(grid);
