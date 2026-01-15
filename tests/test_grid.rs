@@ -105,4 +105,12 @@ mod tests {
 
     }
 
+    #[test]
+    fn detect_if_grid_needs_expansion() {
+        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        grid.pattern_to_grid();
+        let result = grid.detect_if_needs_expansion();
+        assert_eq!(result, (true, false, true, false, false));
+    }
+
 }

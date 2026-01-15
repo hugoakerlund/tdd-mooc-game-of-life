@@ -188,4 +188,37 @@ impl Grid {
         }
         is_alive
     }
+
+    pub fn detect_if_needs_expansion(&self) -> (bool, bool, bool, bool, bool) {
+        let mut needs_expansion: bool = false;
+        let mut top: bool = false;
+        let mut bottom: bool = false;
+        let mut left: bool = false; 
+        let mut right: bool = false;
+
+        for i in 0..self.width {
+            if self.will_cell_live(-1, i) {
+                top = true;
+            }
+        }
+        for i in 0..self.width {
+            if self.will_cell_live(self.height, i) {
+                bottom = true;
+            }
+        }
+        for i in 0..self.height {
+            if self.will_cell_live(i, -1) {
+                left = true;
+            }
+        }
+        for i in 0..self.height {
+            if self.will_cell_live(i, self.width) {
+                right = true;
+            }
+        }
+        if top || bottom || left || right {
+            needs_expansion = true;
+        }
+        (needs_expansion, top, bottom, left, right)
+    }
 }
