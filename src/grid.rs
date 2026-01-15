@@ -1,12 +1,12 @@
 pub struct Grid {
     grid: Vec<Vec<char>>,
     pattern: String,
-    width: u8,
-    height: u8
+    width: i8,
+    height: i8
 }
 
 impl Grid {
-    pub fn new(pattern: &str, width: u8, height: u8) -> Self {
+    pub fn new(pattern: &str, width: i8, height: i8) -> Self {
         Self {
             grid: Vec::new(),
             pattern: pattern.to_string(),
@@ -15,11 +15,11 @@ impl Grid {
         }
     }
 
-    pub fn get_width(&self) -> u8 {
+    pub fn get_width(&self) -> i8 {
         self.width
     }
 
-    pub fn get_height(&self) -> u8 {
+    pub fn get_height(&self) -> i8 {
         self.height
     }
 
@@ -52,7 +52,7 @@ impl Grid {
             }
 
             if run_count.len() > 0 {
-                let count: u8 = run_count.parse().unwrap();
+                let count: i8 = run_count.parse().unwrap();
                 for _j in 0..count {
                     parsed_row.push(converted_char);
                 }
@@ -103,7 +103,7 @@ impl Grid {
             let row: &String = &rows[i];
             let mut new_row: String = String::new();
             let mut current_char: char = row.chars().nth(0).unwrap();
-            let mut run_count: u8 = 1;
+            let mut run_count: i8 = 1;
 
             let mut j: usize = 0;
             while j < row.len(){
@@ -149,34 +149,35 @@ impl Grid {
         self.grid[row][col] = value;
     }
 
-    pub fn count_live_neighbours(&self, row: i8, col: i8) -> u8 {
+    pub fn count_live_neighbours(&self, row: i8, col: i8) -> i8 {
         let moves: Vec<(i8, i8)> = vec![(1, 0), (1, -1), 
                                         (0, -1), (-1, -1), 
                                         (-1, 0), (-1, 1), 
                                         (0, 1), (1, 1)];
-        let mut count: u8 = 0;
+        let mut count: i8 = 0;
         for (first, second) in moves {
             let new_row = row + first;
             let new_col = col + second;
-            if new_col < 0 || new_row < 0 {
-                continue;
-            }
-            if self.is_inside_grid(new_row as u8, new_col as u8) && self.is_alive(new_row as usize, new_col as usize){
+            if self.is_alive(new_row, new_col){
                 count += 1;
             }
         }
         count
     }
 
-    fn is_inside_grid(&self, row: u8, col: u8) -> bool {
-        return row < self.height  && col < self.width;
+    fn is_inside_grid(&self, row: i8, col: i8) -> bool {
+        return row < self.height && row >= 0  
+               && col < self.width && col >= 0;
     }
 
-    pub fn is_alive(&self, row: usize, col: usize) -> bool {
-        return self.grid[row][col] == '*';
+    pub fn is_alive(&self, row: i8, col: i8) -> bool {
+        if !self.is_inside_grid(row, col) {
+            return false;
+        }
+        return self.grid[row as usize][col as usize] == '*';
     }
 
-    pub fn will_cell_live(&self, row: usize, col: usize) -> bool {
+    pub fn will_cell_live(&self, row: i8, col: i8) -> bool {
         let live_neighbours = self.count_live_neighbours(row as i8, col as i8);
         let mut is_alive: bool = self.is_alive(row, col);
         if !is_alive && live_neighbours == 3 {
@@ -184,9 +185,6 @@ impl Grid {
         }
         else if is_alive && (live_neighbours < 2  || live_neighbours > 3) {
             is_alive = false;
-        }
-        else if !is_alive && (live_neighbours >= 2  && live_neighbours <= 3) {
-            is_alive = true;
         }
         is_alive
     }

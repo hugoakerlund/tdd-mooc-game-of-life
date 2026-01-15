@@ -5,8 +5,8 @@ mod tests {
     use super::*;
 
     static PATTERN: &str = "bob$2bo$3o!";
-    static WIDTH: u8 = 3;
-    static HEIGHT: u8 = 3;
+    static WIDTH: i8 = 3;
+    static HEIGHT: i8 = 3;
 
     #[test]
     fn test_create_grid() {
@@ -89,7 +89,7 @@ mod tests {
 
         assert_eq!(grid.will_cell_live(0, 0), false);
         assert_eq!(grid.will_cell_live(0, 1), false);
-        assert_eq!(grid.will_cell_live(0, 2), true);
+        assert_eq!(grid.will_cell_live(0, 2), false);
 
         assert_eq!(grid.will_cell_live(1, 0), true);
         assert_eq!(grid.will_cell_live(1, 1), false);
@@ -98,6 +98,11 @@ mod tests {
         assert_eq!(grid.will_cell_live(2, 0), false);
         assert_eq!(grid.will_cell_live(2, 1), true);
         assert_eq!(grid.will_cell_live(2, 2), true);
+
+        assert_eq!(grid.will_cell_live(3, 0), false);
+        assert_eq!(grid.will_cell_live(3, 1), true);
+        assert_eq!(grid.will_cell_live(3, 2), false);
+
     }
 
 }
