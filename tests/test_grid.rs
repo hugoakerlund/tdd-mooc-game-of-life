@@ -65,7 +65,7 @@ mod tests {
     }
 
     #[test]
-    fn count_live_neighbours() {
+    fn test_count_live_neighbours() {
         let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
         grid.pattern_to_grid();
 
@@ -106,11 +106,28 @@ mod tests {
     }
 
     #[test]
-    fn detect_if_grid_needs_expansion() {
+    fn test_detect_if_grid_needs_expansion() {
         let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
         grid.pattern_to_grid();
         let result = grid.detect_if_needs_expansion();
-        assert_eq!(result, (true, false, true, false, false));
+        assert_eq!(result, (true, 0, 1, 0, 0));
     }
 
+    #[test]
+    fn test_expand_grid() {
+        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        grid.pattern_to_grid();
+        grid.expand_grid(1, 1, 1, 1);
+        let expected = ".....\n..*..\n...*.\n.***.\n.....";
+        assert_eq!(grid.to_string(), expected);
+    }
+
+    #[test]
+    fn test_next_generation() {
+        let mut grid = Grid::new(PATTERN, WIDTH, HEIGHT);
+        grid.pattern_to_grid();
+        grid.next_generation();
+        let expected = "...\n*.*\n.**\n.*.";
+        assert_eq!(grid.to_string(), expected);
+    }
 }

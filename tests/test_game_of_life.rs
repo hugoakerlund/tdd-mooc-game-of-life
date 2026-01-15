@@ -10,7 +10,7 @@ mod tests {
     static HEIGHT: i8 = 3;
 
     #[test]
-    fn test_create_game_of_life() {
+    fn create_game_of_life() {
         let grid = Grid::new(PATTERN, WIDTH, HEIGHT);
         let game_of_life = GameOfLife::new(grid);
         assert_eq!(game_of_life.get_generations(), 0);

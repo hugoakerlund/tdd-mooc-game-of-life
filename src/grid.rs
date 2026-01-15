@@ -189,36 +189,72 @@ impl Grid {
         is_alive
     }
 
-    pub fn detect_if_needs_expansion(&self) -> (bool, bool, bool, bool, bool) {
+    pub fn detect_if_needs_expansion(&self) -> (bool, i8, i8, i8, i8) {
         let mut needs_expansion: bool = false;
-        let mut top: bool = false;
-        let mut bottom: bool = false;
-        let mut left: bool = false; 
-        let mut right: bool = false;
+        let mut top: i8 = 0;
+        let mut bottom: i8 = 0;
+        let mut left: i8 = 0; 
+        let mut right: i8 = 0;
 
         for i in 0..self.width {
             if self.will_cell_live(-1, i) {
-                top = true;
+                top = 1;
             }
         }
         for i in 0..self.width {
             if self.will_cell_live(self.height, i) {
-                bottom = true;
+                bottom = 1;
             }
         }
         for i in 0..self.height {
             if self.will_cell_live(i, -1) {
-                left = true;
+                left = 1;
             }
         }
         for i in 0..self.height {
             if self.will_cell_live(i, self.width) {
-                right = true;
+                right = 1;
             }
         }
-        if top || bottom || left || right {
+        if top == 1 || bottom == 1 || left == 1 || right == 1 {
             needs_expansion = true;
         }
         (needs_expansion, top, bottom, left, right)
+    }
+
+    pub fn expand_grid(&mut self, top: i8, bottom: i8, left: i8, right: i8) {
+        let new_width = self.width + left + right;
+        let new_height = self.height + top + bottom;
+        let mut new_grid: Vec<Vec<char>> = vec![vec!['.'; new_width as usize]; new_height as usize];
+        for i in 0..self.height {
+            for j in 0..self.width {
+                let row = (top + i) as usize;
+                let col = (left + j) as usize;
+                new_grid[row][col] = self.grid[i as usize][j as usize];
+            }
+        }
+        self.width = new_width;
+        self.height = new_height;
+        self.grid = new_grid;
+    }
+
+    pub fn next_generation(&mut self) {
+        let grid_expansion = self.detect_if_needs_expansion();
+        if grid_expansion.0 {
+            let top = grid_expansion.1;
+            let bottom = grid_expansion.2;
+            let left = grid_expansion.3;
+            let right = grid_expansion.4;
+            self.expand_grid(top, bottom, left, right);
+        }
+        let mut next_generation_grid: Vec<Vec<char>> = vec![vec!['.'; self.width as usize]; self.height as usize];
+        for row in 0..self.height {
+            for col in 0..self.width {
+                if self.will_cell_live(row, col) {
+                    next_generation_grid[row as usize][col as usize] = '*';
+                }
+            }
+        }
+        self.grid = next_generation_grid;
     }
 }
