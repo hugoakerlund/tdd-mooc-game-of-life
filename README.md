@@ -10,6 +10,10 @@ Usage
 
 ### Developing
 
-Run tests once
+Run all tests once
 
     cargo test
+
+Run single test
+
+    cargo test <test_name>
