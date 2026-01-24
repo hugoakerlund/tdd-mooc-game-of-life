@@ -8,7 +8,7 @@ pub struct GameOfLife {
 impl GameOfLife {
     pub fn new(grid: Grid) -> Self {
         let mut game_grid = grid;
-        game_grid.pattern_to_grid();
+        game_grid.rle_pattern_to_grid();
         Self {
             grid: game_grid,
             generations: 0,
@@ -24,7 +24,7 @@ impl GameOfLife {
     }
 
     pub fn get_pattern(&self) -> String {
-        self.grid.grid_to_pattern()
+        self.grid.grid_to_rle_pattern()
     }
 
     pub fn simulate_game(&mut self, generations: u8) {

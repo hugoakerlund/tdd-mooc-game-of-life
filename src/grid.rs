@@ -14,12 +14,22 @@ impl Grid {
             height: height,
         }
     }
+    pub fn to_string(&self) -> String {
+        let result = self
+            .grid
+            .clone()
+            .iter()
+            .map(|row| row.iter().collect::<String>())
+            .collect::<Vec<String>>()
+            .join("\n");
+        result
+    }
 
-    pub fn get_width(&self) -> i8 {
+    pub fn get_pattern_width(&self) -> i8 {
         self.width
     }
 
-    pub fn get_height(&self) -> i8 {
+    pub fn get_pattern_height(&self) -> i8 {
         self.height
     }
 
@@ -27,15 +37,47 @@ impl Grid {
         self.pattern.clone()
     }
 
-    pub fn pattern_to_grid(&mut self) {
-        let rows: Vec<&str> = self.pattern.split("$").collect();
+    pub fn rle_pattern_to_grid(&mut self) {
+        let new_pattern = self.expand_empty_lines();
+        let rows: Vec<&str> = new_pattern.split("$").collect();
         for row in rows {
-            let parsed_row = self.parse_row(row);
+            let parsed_row = self.decode_row(row);
             self.grid.push(parsed_row);
         }
     }
 
-    fn parse_row(&self, row: &str) -> Vec<char> {
+    fn expand_empty_lines(&self) -> String {
+        let mut new_pattern: String = String::new();
+        let mut run_count = String::new();
+        for i in 0..self.pattern.len() {
+            let current_char: char = self.pattern.chars().nth(i).unwrap();
+
+            if current_char.is_digit(10) {
+                run_count += &current_char.to_string();
+                continue;
+            }
+
+            if current_char != '$' {
+                new_pattern += &run_count.to_string();
+                new_pattern.push(current_char);
+                run_count = "".to_string();
+                continue;
+            } else {
+                if run_count.len() > 0 {
+                    let count: i8 = run_count.parse().unwrap();
+                    for _j in 0..count {
+                        new_pattern.push('$');
+                        run_count = "".to_string();
+                    }
+                    continue;
+                }
+            }
+            new_pattern.push(current_char);
+        }
+        new_pattern
+    }
+
+    fn decode_row(&self, row: &str) -> Vec<char> {
         let mut parsed_row: Vec<char> = Vec::new();
         let mut run_count = String::new();
         for i in 0..row.len() {
@@ -78,18 +120,7 @@ impl Grid {
         }
     }
 
-    pub fn to_string(&self) -> String {
-        let result = self
-            .grid
-            .clone()
-            .iter()
-            .map(|row| row.iter().collect::<String>())
-            .collect::<Vec<String>>()
-            .join("\n");
-        result
-    }
-
-    pub fn grid_to_pattern(&self) -> String {
+    pub fn grid_to_rle_pattern(&self) -> String {
         let rows: Vec<String> = self
             .grid
             .clone()
@@ -97,13 +128,14 @@ impl Grid {
             .map(|row| row.iter().collect::<String>())
             .collect::<Vec<String>>();
 
-        let pattern_rows: Vec<String> = self.row_to_pattern(rows);
+        let pattern_rows: Vec<String> = self.encode_row(rows);
         let mut pattern: String = pattern_rows.join("$");
+        pattern = self.compress_empty_lines(&mut pattern);
         pattern += "!";
         pattern
     }
 
-    fn row_to_pattern(&self, rows: Vec<String>) -> Vec<String> {
+    fn encode_row(&self, rows: Vec<String>) -> Vec<String> {
         let mut result: Vec<String> = Vec::new();
         for i in 0..rows.len() {
             let row: &String = &rows[i];
@@ -131,9 +163,7 @@ impl Grid {
 
                 if j == row.len() - 1 && converted_char == 'b' {
                     break;
-                }
-
-                else if run_count == 1 {
+                } else if run_count == 1 {
                     new_row += &converted_char.to_string();
                 } else if run_count > 1 {
                     let count: String = run_count.to_string();
@@ -146,6 +176,45 @@ impl Grid {
             result.push(new_row);
         }
         result
+    }
+
+    fn compress_empty_lines(&self, pattern: &mut String) -> String {
+        let mut new_pattern = String::new();
+        let mut empty_line_count;
+        let mut i: usize = 0;
+        while i < pattern.len() {
+            let current_char = pattern.chars().nth(i).unwrap();
+            if current_char == '!' {
+                break;
+            }
+            if current_char != '$' {
+                new_pattern.push_str(&current_char.to_string());
+            }
+            if i < pattern.len() - 1 && current_char == '$' {
+                let mut next_char = pattern.chars().nth(i + 1).unwrap();
+                if next_char == '$' {
+                    empty_line_count = 0;
+                    while next_char == '$' {
+                        empty_line_count += 1;
+                        i += 1;
+                        if i < pattern.len() {
+                            next_char = pattern.chars().nth(i).unwrap();
+                            if next_char != '$' {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    if empty_line_count > 1 {
+                        new_pattern.push_str(&empty_line_count.to_string());
+                    }
+                }
+                new_pattern.push('$');
+            }
+            i += 1;
+        }
+        new_pattern
     }
 
     pub fn get_cell_at(&self, row: usize, col: usize) -> char {
